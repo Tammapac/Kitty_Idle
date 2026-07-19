@@ -1,6 +1,5 @@
 (() => {
-  const SAVE_KEY = "kitty-breeder-v3";
-  const MIGRATION_KEY = "kitty-baby-start-v1";
+  const SAVE_KEY = "kitty-breeder-v4";
 
   const babyCat = (id, name, sex, color, pattern) => ({
     id,
@@ -9,12 +8,12 @@
     color,
     pattern,
     rarity: 0,
-    age: 0.05,
+    age: 0,
     growth: 0,
-    happiness: 92,
-    hunger: 92,
+    happiness: 88,
+    hunger: 90,
     health: 100,
-    size: 0.62,
+    size: 0.55,
     genes: { size: 2, beauty: 2, energy: 2, luck: 1, temper: 2 },
     parents: [],
     generation: 1,
@@ -24,11 +23,11 @@
   });
 
   const freshSave = () => ({
-    coins: 350,
-    food: 140,
-    toys: 15,
+    coins: 60,
+    food: 50,
+    toys: 5,
     science: 0,
-    hearts: 35,
+    hearts: 5,
     lineage: 0,
     reputation: 0,
     selected: 1,
@@ -36,6 +35,9 @@
     selectedB: 2,
     nextId: 3,
     last: Date.now(),
+    buildings: { kitchen: 0, nursery: 0, lab: 0, playroom: 0, garden: 0, showhall: 0 },
+    research: { growth: 0, fertility: 0, genes: 0, offline: 0, gestation: 0, training: 0 },
+    quests: { feed: 0, pet: 0, breed: 0, show: 0 },
     cats: [
       babyCat(1, "Minka", "♀", "orange", "tabby"),
       babyCat(2, "Milo", "♂", "gray", "solid")
@@ -47,37 +49,11 @@
   });
 
   try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) {
+    if (!localStorage.getItem(SAVE_KEY)) {
       localStorage.setItem(SAVE_KEY, JSON.stringify(freshSave()));
-      localStorage.setItem(MIGRATION_KEY, "1");
-      return;
-    }
-
-    if (!localStorage.getItem(MIGRATION_KEY)) {
-      const save = JSON.parse(raw);
-      if (Array.isArray(save.cats)) {
-        save.cats = save.cats.map((cat) => {
-          const founder = cat.generation === 1 && (!cat.parents || cat.parents.length === 0);
-          if (!founder) return cat;
-          return {
-            ...cat,
-            age: 0.05,
-            growth: 0,
-            size: 0.62,
-            activity: "sleep",
-            hunger: Math.max(90, Number(cat.hunger) || 0),
-            happiness: Math.max(90, Number(cat.happiness) || 0),
-            health: 100
-          };
-        });
-      }
-      save.last = Date.now();
-      localStorage.setItem(SAVE_KEY, JSON.stringify(save));
-      localStorage.setItem(MIGRATION_KEY, "1");
     }
   } catch (error) {
-    console.warn("Kitty Idle start migration failed:", error);
+    console.warn("Kitty Idle startup failed:", error);
   }
 
   window.KittyIdleStart = {
@@ -91,7 +67,6 @@
     },
     reset() {
       localStorage.setItem(SAVE_KEY, JSON.stringify(freshSave()));
-      localStorage.setItem(MIGRATION_KEY, "1");
       location.reload();
     }
   };
