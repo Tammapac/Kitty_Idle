@@ -1,96 +1,36 @@
-/* Exact fix for the CC0 cat_idle.png sheet: 5 columns × 3 rows, 16px frames. */
-.pixel-cat,.mini-cat{
-  width:16px!important;
-  height:16px!important;
-  background-size:500% 300%!important;
-  background-position:0 0!important;
-  background-repeat:no-repeat!important;
-  image-rendering:pixelated!important;
-  overflow:visible!important;
-}
-.pixel-cat{
-  left:50%!important;
-  bottom:78px!important;
-  transform-origin:50% 100%!important;
-  animation:kittyIdleFixed 1.1s steps(5,end) infinite!important;
-}
-.pixel-cat.baby{transform:translateX(-50%) scale(5)!important}
-.pixel-cat.young{transform:translateX(-50%) scale(6)!important}
-.pixel-cat.adult{transform:translateX(-50%) scale(7)!important}
-.pixel-cat.senior{transform:translateX(-50%) scale(7.5)!important}
-.pixel-cat.ancient{transform:translateX(-50%) scale(8)!important}
-
-.activity-walk .pixel-cat{
-  animation:kittyWalkFixed 3.2s steps(5,end) infinite!important;
-}
-.activity-eat .pixel-cat{
-  left:24%!important;
-  bottom:66px!important;
-  animation:kittyEatFixed .65s steps(2,end) infinite!important;
-}
-.activity-play .pixel-cat{
-  animation:kittyPlayFixed .75s steps(2,end) infinite!important;
-}
-.activity-sleep .pixel-cat{
-  bottom:70px!important;
-  animation:kittySleepFixed 1.8s steps(2,end) infinite!important;
-}
-.activity-pet .pixel-cat{
-  animation:kittyPurrFixed .3s steps(2,end) infinite!important;
-}
-
-.mini-cat{
-  transform:scale(3.5)!important;
-  transform-origin:center!important;
-  margin:20px 12px!important;
-  animation:kittyMiniFixed 1.2s steps(5,end) infinite!important;
-}
-.catcard{overflow:hidden!important}
-.scene{overflow:hidden!important;padding-bottom:0!important}
-.show-stage{overflow:hidden!important}
-.show-cat{bottom:78px!important}
-
-@keyframes kittyIdleFixed{
-  from{background-position-x:0}
-  to{background-position-x:100%}
-}
-@keyframes kittyWalkFixed{
-  0%{left:28%;background-position-x:0}
-  49%{left:72%;background-position-x:100%}
-  50%{left:72%;background-position-x:100%;transform:translateX(-50%) scale(-7,7)}
-  100%{left:28%;background-position-x:0;transform:translateX(-50%) scale(-7,7)}
-}
-@keyframes kittyEatFixed{
-  0%,100%{background-position:0 50%;margin-bottom:0}
-  50%{background-position:25% 50%;margin-bottom:-5px}
-}
-@keyframes kittyPlayFixed{
-  0%,100%{background-position:50% 0;translate:0 0}
-  50%{background-position:75% 0;translate:0 -18px}
-}
-@keyframes kittySleepFixed{
-  0%,100%{background-position:0 100%;opacity:1}
-  50%{background-position:25% 100%;opacity:.82}
-}
-@keyframes kittyPurrFixed{
-  0%{background-position:0 0;margin-left:-2px}
-  100%{background-position:25% 0;margin-left:2px}
-}
-@keyframes kittyMiniFixed{
-  from{background-position-x:0}
-  to{background-position-x:100%}
-}
-
-@media(max-width:560px){
-  .pixel-cat.baby{transform:translateX(-50%) scale(4.4)!important}
-  .pixel-cat.young{transform:translateX(-50%) scale(5.2)!important}
-  .pixel-cat.adult{transform:translateX(-50%) scale(6)!important}
-  .pixel-cat.senior{transform:translateX(-50%) scale(6.4)!important}
-  .pixel-cat.ancient{transform:translateX(-50%) scale(6.8)!important}
-  @keyframes kittyWalkFixed{
-    0%{left:30%;background-position-x:0}
-    49%{left:70%;background-position-x:100%}
-    50%{left:70%;background-position-x:100%;transform:translateX(-50%) scale(-6,6)}
-    100%{left:30%;background-position-x:0;transform:translateX(-50%) scale(-6,6)}
-  }
-}
+/* Stable pixel-cat renderer: no external spritesheet, no frame clipping */
+.pixel-cat,.mini-cat,.show-cat{--fur:#c87842;--dark:#6b3b2a;--light:#efb36f;background:none!important;background-image:none!important;background-position:0!important;background-size:auto!important;overflow:visible!important;box-shadow:none!important;filter:none!important}
+.pixel-cat.black,.mini-cat.black,.show-cat.black{--fur:#35303b;--dark:#15131a;--light:#696273}
+.pixel-cat.white,.mini-cat.white,.show-cat.white{--fur:#eee9df;--dark:#8d8790;--light:#fffdf6}
+.pixel-cat.gray,.mini-cat.gray,.show-cat.gray{--fur:#878491;--dark:#474451;--light:#b9b6c0}
+.pixel-cat.cream,.mini-cat.cream,.show-cat.cream{--fur:#dfbd82;--dark:#806344;--light:#f6dda7}
+.pixel-cat.calico,.mini-cat.calico,.show-cat.calico{--fur:#e7d5b8;--dark:#49382f;--light:#ed8b49}
+.pixel-cat{width:48px!important;height:32px!important;background:var(--fur)!important;border:4px solid var(--dark)!important;bottom:66px!important;left:50%;transform:translateX(-50%) scale(2.4)!important;transform-origin:50% 100%;animation:cssCatIdle 1.1s steps(2,end) infinite!important;z-index:4}
+.pixel-cat:before{content:"";position:absolute;width:24px;height:24px;left:-12px;top:-14px;background:var(--fur);border:4px solid var(--dark);box-shadow:4px -8px 0 -1px var(--fur),4px -8px 0 2px var(--dark),16px -8px 0 -1px var(--fur),16px -8px 0 2px var(--dark),6px 8px 0 -4px #17131b,16px 8px 0 -4px #17131b,11px 14px 0 -5px #d16e76}
+.pixel-cat:after{content:"";position:absolute;width:22px;height:8px;right:-22px;top:6px;background:var(--fur);border:4px solid var(--dark);transform-origin:left center;animation:cssTail 1.1s steps(2,end) infinite}
+.pixel-cat.tabby{background:linear-gradient(90deg,var(--fur) 0 25%,var(--dark) 25% 32%,var(--fur) 32% 58%,var(--dark) 58% 65%,var(--fur) 65%)!important}
+.pixel-cat.tuxedo:before{background:linear-gradient(var(--fur) 0 55%,#eee9df 55%)!important}
+.pixel-cat.spots{background:radial-gradient(circle at 30% 35%,var(--dark) 0 10%,transparent 11%),radial-gradient(circle at 70% 65%,var(--dark) 0 11%,transparent 12%),var(--fur)!important}
+.pixel-cat.marble{background:linear-gradient(135deg,var(--fur) 0 35%,var(--dark) 36% 44%,var(--fur) 45% 68%,var(--dark) 69% 77%,var(--fur) 78%)!important}
+.pixel-cat.lynx:before{box-shadow:4px -8px 0 -1px var(--fur),4px -8px 0 2px var(--dark),16px -8px 0 -1px var(--fur),16px -8px 0 2px var(--dark),3px -13px 0 -2px var(--dark),19px -13px 0 -2px var(--dark),6px 8px 0 -4px #17131b,16px 8px 0 -4px #17131b,11px 14px 0 -5px #d16e76}
+.pixel-cat.baby{transform:translateX(-50%) scale(1.55)!important}.pixel-cat.young{transform:translateX(-50%) scale(1.95)!important}.pixel-cat.adult{transform:translateX(-50%) scale(2.4)!important}.pixel-cat.senior{transform:translateX(-50%) scale(2.55)!important}.pixel-cat.ancient{transform:translateX(-50%) scale(2.7)!important}
+.activity-walk .pixel-cat{animation:cssCatWalk 3s steps(8,end) infinite!important}
+.activity-eat .pixel-cat{left:25%!important;bottom:62px!important;animation:cssEat .48s steps(2,end) infinite!important}
+.activity-eat .pixel-cat:before{animation:cssHeadEat .48s steps(2,end) infinite}
+.activity-play .pixel-cat{animation:cssPlay .62s steps(2,end) infinite!important}
+.activity-sleep .pixel-cat{animation:cssSleep 1.6s steps(2,end) infinite!important;transform:translateX(-50%) scale(2.3) rotate(-3deg)!important}
+.activity-pet .pixel-cat{animation:cssPurr .18s steps(2,end) infinite!important}
+.mini-cat{position:relative;width:24px!important;height:16px!important;background:var(--fur)!important;border:2px solid var(--dark)!important;transform:scale(1.45)!important;margin:15px 8px 10px!important;animation:cssMini 1.2s steps(2,end) infinite!important}
+.mini-cat:before{content:"";position:absolute;width:12px;height:12px;left:-7px;top:-7px;background:var(--fur);border:2px solid var(--dark);box-shadow:2px -4px 0 -1px var(--fur),2px -4px 0 1px var(--dark),8px -4px 0 -1px var(--fur),8px -4px 0 1px var(--dark)}
+.mini-cat:after{content:"";position:absolute;width:10px;height:4px;right:-11px;top:3px;background:var(--fur);border:2px solid var(--dark)}
+.show-cat{position:absolute!important}
+@keyframes cssCatIdle{0%,100%{margin-bottom:0}50%{margin-bottom:2px}}
+@keyframes cssTail{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(22deg)}}
+@keyframes cssCatWalk{0%{left:20%;transform:translateX(-50%) scale(2.4)}49%{left:73%;transform:translateX(-50%) scale(2.4)}50%{left:73%;transform:translateX(-50%) scaleX(-2.4) scaleY(2.4)}100%{left:20%;transform:translateX(-50%) scaleX(-2.4) scaleY(2.4)}}
+@keyframes cssEat{0%,100%{transform:translateX(-50%) scale(2.4) rotate(0)}50%{transform:translateX(-50%) scale(2.4) rotate(2deg)}}
+@keyframes cssHeadEat{0%,100%{top:-14px}50%{top:-5px}}
+@keyframes cssPlay{0%,100%{transform:translateX(-50%) scale(2.4) translateY(0) rotate(0)}50%{transform:translateX(-50%) scale(2.4) translateY(-13px) rotate(4deg)}}
+@keyframes cssSleep{0%,100%{height:28px;opacity:1}50%{height:25px;opacity:.9}}
+@keyframes cssPurr{0%{margin-left:-2px}100%{margin-left:2px}}
+@keyframes cssMini{0%,100%{margin-top:15px}50%{margin-top:13px}}
+@media(max-width:700px){.pixel-cat{transform:translateX(-50%) scale(2.05)!important}.pixel-cat.baby{transform:translateX(-50%) scale(1.4)!important}.pixel-cat.young{transform:translateX(-50%) scale(1.75)!important}.pixel-cat.senior{transform:translateX(-50%) scale(2.2)!important}.pixel-cat.ancient{transform:translateX(-50%) scale(2.35)!important}.activity-eat .pixel-cat{left:28%!important}}
