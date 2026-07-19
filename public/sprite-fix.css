@@ -1,27 +1,43 @@
-/* Unified SVG pixel cats: no external spritesheet and no detached pseudo-elements. */
+/* Unified SVG pixel cats: no external spritesheet and no detached body parts. */
 .pixel-cat,.mini-cat{display:none!important}
 .pixel-svg-cat{position:absolute;left:50%;bottom:54px;width:128px;height:128px;transform:translateX(-50%);transform-origin:50% 100%;overflow:visible;image-rendering:pixelated;filter:drop-shadow(5px 6px 0 #150f1b);z-index:4}
 .pixel-svg-cat .cat-whole{transform-origin:50% 100%;animation:svgIdle 1.2s steps(2,end) infinite}
-.pixel-svg-cat .cat-tail{transform-origin:8px 22px;animation:svgTail 1s steps(2,end) infinite}
+.pixel-svg-cat .cat-tail{transform-origin:8px 22px;animation:svgTailCalm 4.8s steps(2,end) infinite}
 .pixel-svg-cat .cat-head{transform-origin:21px 18px}
+.pixel-svg-cat .cat-head>rect:nth-child(2),.pixel-svg-cat .cat-head>rect:nth-child(3){transform-box:fill-box;transform-origin:bottom center;animation:earTwitch 5.4s steps(2,end) infinite}
+.pixel-svg-cat .cat-head>rect:nth-child(5),.pixel-svg-cat .cat-head>rect:nth-child(6){transform-box:fill-box;transform-origin:center;animation:catBlink 5.8s steps(1,end) infinite}
+.pixel-svg-cat .cat-mouth{transform-box:fill-box;transform-origin:center}
 .pixel-svg-cat.baby{width:82px;height:82px;bottom:58px}.pixel-svg-cat.young{width:104px;height:104px}.pixel-svg-cat.adult{width:128px;height:128px}.pixel-svg-cat.senior{width:138px;height:138px}.pixel-svg-cat.ancient{width:146px;height:146px}
 .scene-walk .pixel-svg-cat{animation:svgWalkAcross 3.2s linear infinite}.scene-walk .pixel-svg-cat .cat-whole{animation:svgWalkBob .35s steps(2,end) infinite}.scene-walk .pixel-svg-cat .cat-tail{animation:svgTailFast .35s steps(2,end) infinite}
-.scene-eat .pixel-svg-cat{left:24%;bottom:44px}.scene-eat .pixel-svg-cat .cat-head{animation:svgEat .45s steps(2,end) infinite}.scene-eat .food-bowl{animation:bowlShake .45s steps(2,end) infinite}
-.scene-play .pixel-svg-cat .cat-whole{animation:svgPlay .7s steps(2,end) infinite}.scene-play .yarn-ball{animation:yarnRoll 1.4s linear infinite}
-.scene-sleep .pixel-svg-cat{bottom:47px}.scene-sleep .pixel-svg-cat .cat-whole{animation:svgSleep 1.6s ease-in-out infinite;transform-origin:center}.scene-sleep .pixel-svg-cat .cat-head{transform:translate(-4px,5px) rotate(-7deg)}
-.scene-pet .pixel-svg-cat .cat-whole{animation:svgPurr .18s steps(2,end) infinite}.scene-pet:after{content:"♥ ♥ ♥";position:absolute;left:50%;bottom:190px;color:#ff87b5;font-size:24px;animation:hearts 1.2s ease-out infinite;z-index:8}
-.mini-svg-cat{position:relative;left:auto;bottom:auto;width:68px!important;height:68px!important;transform:none!important;filter:drop-shadow(3px 3px 0 #100b13);margin:2px auto 4px;display:block}
-.mini-svg-cat .cat-whole{animation:svgMini 1.3s steps(2,end) infinite}.catcard,.visitor,.codex-grid>div{overflow:hidden}
+.scene-eat .pixel-svg-cat{left:24%;bottom:44px}.scene-eat .pixel-svg-cat .cat-head{animation:svgEat .45s steps(2,end) infinite}.scene-eat .pixel-svg-cat .cat-mouth{animation:eatingMouth .3s steps(2,end) infinite}.scene-eat .food-bowl{animation:bowlShake .45s steps(2,end) infinite}
+.scene-play .pixel-svg-cat .cat-whole{animation:svgPlay .7s steps(2,end) infinite}.scene-play .pixel-svg-cat .cat-tail{animation:playTail .22s steps(2,end) infinite}.scene-play .pixel-svg-cat .cat-head>rect:nth-child(5),.scene-play .pixel-svg-cat .cat-head>rect:nth-child(6){animation:playEyes .7s steps(2,end) infinite}.scene-play .yarn-ball{animation:yarnRoll 1.4s linear infinite}
+.scene-sleep .pixel-svg-cat{bottom:47px}.scene-sleep .pixel-svg-cat .cat-whole{animation:sleepBreathing 2.4s ease-in-out infinite;transform-origin:50% 90%}.scene-sleep .pixel-svg-cat .cat-head{transform:translate(-4px,5px) rotate(-7deg)}
+.scene-sleep .pixel-svg-cat .cat-head>rect:nth-child(5),.scene-sleep .pixel-svg-cat .cat-head>rect:nth-child(6){animation:none!important;transform:scaleY(.28)!important;transform-origin:center!important}
+.scene-sleep .pixel-svg-cat .cat-tail{animation:sleepTail 5.5s ease-in-out infinite}
+.scene-sleep .pixel-svg-cat .cat-head>rect:nth-child(2),.scene-sleep .pixel-svg-cat .cat-head>rect:nth-child(3){animation:sleepEar 4.2s steps(2,end) infinite}
+.scene-sleep:before{content:"Z";position:absolute;left:58%;bottom:175px;color:#f7e8d0;font-size:18px;font-weight:700;text-shadow:2px 2px 0 #2b1c35;z-index:9;animation:sleepZ 2.4s ease-out infinite}
+.scene-sleep:after{content:"Z";position:absolute;left:62%;bottom:200px;color:#cbb3d6;font-size:13px;font-weight:700;text-shadow:2px 2px 0 #2b1c35;z-index:9;animation:sleepZ 2.4s .8s ease-out infinite}
+.scene-pet .pixel-svg-cat .cat-whole{animation:svgPurr .18s steps(2,end) infinite}.scene-pet .pixel-svg-cat .cat-head>rect:nth-child(5),.scene-pet .pixel-svg-cat .cat-head>rect:nth-child(6){animation:none!important;transform:scaleY(.3)!important}.scene-pet .pixel-svg-cat .cat-mouth{animation:happyMouth .5s steps(2,end) infinite}.scene-pet:after{content:"♥ ♥ ♥";position:absolute;left:50%;bottom:190px;color:#ff87b5;font-size:24px;animation:hearts 1.2s ease-out infinite;z-index:8}
+.mini-svg-cat{position:relative;left:auto;bottom:auto;width:68px!important;height:68px!important;transform:none!important;filter:drop-shadow(3px 3px 0 #100b13);margin:2px auto 4px;display:block}.mini-svg-cat .cat-whole{animation:svgMini 1.3s steps(2,end) infinite}.catcard,.visitor,.codex-grid>div{overflow:hidden}
 .show-svg-cat{width:122px!important;height:122px!important;bottom:42px!important;z-index:3}.show-svg-cat .cat-whole{animation:svgShow 1.1s steps(2,end) infinite}
+@keyframes catBlink{0%,91%,94%,100%{transform:scaleY(1)}92%,93%{transform:scaleY(.2)}}
+@keyframes earTwitch{0%,82%,88%,100%{transform:rotate(0)}84%{transform:rotate(-12deg)}86%{transform:rotate(8deg)}}
 @keyframes svgIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
-@keyframes svgTail{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(9deg)}}
+@keyframes svgTailCalm{0%,70%,100%{transform:rotate(-5deg)}78%{transform:rotate(8deg)}86%{transform:rotate(-1deg)}}
 @keyframes svgTailFast{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(16deg)}}
 @keyframes svgWalkAcross{0%{left:28%;transform:translateX(-50%) scaleX(1)}48%{left:72%;transform:translateX(-50%) scaleX(1)}50%{left:72%;transform:translateX(-50%) scaleX(-1)}98%{left:28%;transform:translateX(-50%) scaleX(-1)}100%{left:28%;transform:translateX(-50%) scaleX(1)}}
 @keyframes svgWalkBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes svgEat{0%,100%{transform:rotate(0) translateY(0)}50%{transform:rotate(7deg) translateY(5px)}}
+@keyframes eatingMouth{0%,100%{transform:scaleY(1)}50%{transform:scaleY(3)}}
 @keyframes svgPlay{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-18px) rotate(4deg)}}
-@keyframes svgSleep{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.94)}}
+@keyframes playTail{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(24deg)}}
+@keyframes playEyes{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes sleepBreathing{0%,100%{transform:scaleY(.94) translateY(1px)}50%{transform:scaleY(1) translateY(0)}}
+@keyframes sleepTail{0%,78%,100%{transform:rotate(-4deg)}86%{transform:rotate(3deg)}}
+@keyframes sleepEar{0%,84%,90%,100%{transform:rotate(0)}87%{transform:rotate(-8deg)}}
+@keyframes sleepZ{0%{opacity:0;transform:translate(0,8px) scale(.7)}35%{opacity:1}100%{opacity:0;transform:translate(18px,-30px) scale(1.15)}}
 @keyframes svgPurr{0%{transform:translateX(-1px)}100%{transform:translateX(1px)}}
+@keyframes happyMouth{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.55)}}
 @keyframes svgMini{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @keyframes svgShow{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-4px) rotate(1deg)}}
-@media(max-width:560px){.pixel-svg-cat.adult{width:108px;height:108px}.pixel-svg-cat.senior{width:116px;height:116px}.pixel-svg-cat.ancient{width:124px;height:124px}.pixel-svg-cat.young{width:92px;height:92px}.pixel-svg-cat.baby{width:72px;height:72px}.mini-svg-cat{width:60px!important;height:60px!important}.scene-pet:after{bottom:175px}}
+@media(max-width:560px){.pixel-svg-cat.adult{width:108px;height:108px}.pixel-svg-cat.senior{width:116px;height:116px}.pixel-svg-cat.ancient{width:124px;height:124px}.pixel-svg-cat.young{width:92px;height:92px}.pixel-svg-cat.baby{width:72px;height:72px}.mini-svg-cat{width:60px!important;height:60px!important}.scene-pet:after{bottom:175px}.scene-sleep:before{bottom:158px}.scene-sleep:after{bottom:180px}}
