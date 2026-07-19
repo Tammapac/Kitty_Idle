@@ -4,13 +4,19 @@
   const newButton = document.getElementById("new-game");
 
   const close = () => {
-    screen?.classList.add("hidden");
-    sessionStorage.setItem("kitty-start-seen", "1");
-    window.setTimeout(() => screen?.remove(), 450);
+    if (typeof window.closeKittyStart === "function") {
+      window.closeKittyStart();
+      return;
+    }
+    try { sessionStorage.setItem("kitty-start-seen", "1"); } catch (_) {}
+    if (screen) {
+      screen.style.display = "none";
+      screen.remove();
+    }
   };
 
   if (sessionStorage.getItem("kitty-start-seen") === "1") {
-    screen?.remove();
+    close();
   } else {
     continueButton?.addEventListener("click", close);
     newButton?.addEventListener("click", () => {
