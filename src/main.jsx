@@ -2,51 +2,38 @@ import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 
-const initial = { coins: 25, level: 1, xp: 0, hunger: 80, happy: 70, food: 0, bed: 0, friend: 0, bank: 0, last: Date.now() };
-const load = () => { try { return { ...initial, ...JSON.parse(localStorage.getItem("kitty-idle") || "{}") }; } catch { return initial; } };
-
-function App() {
-  const [s, setS] = useState(load);
-  const [note, setNote] = useState("");
-  const cps = s.bed * (1 + s.level * 0.15);
-  const gain = 3 + s.friend * 2 + Math.floor(s.level / 3);
-  const need = s.level * 100;
-  const costs = useMemo(() => ({ food: Math.floor(25 * 1.65 ** s.food), bed: Math.floor(50 * 1.65 ** s.bed), friend: Math.floor(80 * 1.65 ** s.friend) }), [s.food, s.bed, s.friend]);
-  const toast = text => { setNote(text); clearTimeout(window.kittyToast); window.kittyToast = setTimeout(() => setNote(""), 1300); };
-  const levelUp = n => { while (n.xp >= n.level * 100) { n.xp -= n.level * 100; n.level++; n.coins += n.level * 20; toast("Levelaufstieg! 🎉"); } return n; };
-  const action = type => setS(p => {
-    const n = { ...p };
-    if (type === "feed") { if (n.hunger >= 100) { toast("Schon satt!"); return p; } n.hunger = Math.min(100, n.hunger + 22); n.xp += 12 + n.food * 6; }
-    if (type === "play") { if (n.happy >= 100) { toast("Schon superglücklich!"); return p; } n.happy = Math.min(100, n.happy + 18); n.hunger = Math.max(0, n.hunger - 5); n.xp += 8; }
-    if (type === "pet") { n.happy = Math.min(100, n.happy + 8); n.xp += 3; }
-    n.coins += gain; return levelUp(n);
-  });
-  const buy = type => setS(p => { const c = costs[type]; if (p.coins < c) { toast("Nicht genug Münzen"); return p; } toast("Upgrade gekauft!"); return { ...p, coins: p.coins - c, [type]: p[type] + 1 }; });
-  const collect = () => setS(p => { const amount = Math.floor(p.bank); if (!amount) { toast("Noch keine Idle-Münzen"); return p; } toast(`+${amount} Münzen`); return { ...p, coins: p.coins + amount, bank: p.bank - amount }; });
-
-  useEffect(() => {
-    const seconds = Math.min(28800, (Date.now() - (s.last || Date.now())) / 1000);
-    if (seconds > 15 && cps > 0) setS(p => ({ ...p, bank: p.bank + seconds * cps }));
-    const timer = setInterval(() => setS(p => {
-      let rate = p.bed * (1 + p.level * 0.15); if (p.hunger < 25) rate *= .5; if (p.happy < 20) rate *= .6;
-      return { ...p, hunger: Math.max(0, p.hunger - .045), happy: Math.max(0, p.happy - .03), bank: p.bank + rate, last: Date.now() };
-    }), 1000);
-    return () => clearInterval(timer);
-  }, []);
-  useEffect(() => localStorage.setItem("kitty-idle", JSON.stringify({ ...s, last: Date.now() })), [s]);
-
-  return <main className="app">
-    <div className={`toast ${note ? "show" : ""}`}>{note}</div>
-    <header><div><small>Münzen</small>🪙 {Math.floor(s.coins)}</div><div><small>Pro Sekunde</small>✨ {cps.toFixed(1)}</div></header>
-    <section className="card">
-      <h1>Kitty Idle</h1><p>Ziehe deine Katze groß und baue ihr Katzenparadies auf.</p>
-      <div className="scene"><span className="level">Level {s.level}</span><div className="sun"/><div className="cat">🐱</div><div className="bowl">🥣</div></div>
-      <Bar label="Hunger" value={s.hunger} cls="orange"/><Bar label="Glück" value={s.happy} cls="pink"/><Bar label="Wachstum" value={s.xp / need * 100} text={`${Math.floor(s.xp)} / ${need}`} cls="blue"/>
-      <div className="actions"><button onClick={() => action("feed")}>🥣 Füttern</button><button onClick={() => action("play")}>🧶 Spielen</button><button onClick={() => action("pet")}>💖 Streicheln</button><button onClick={collect}>🪙 Einsammeln</button></div>
-    </section>
-    <section className="card"><h2>Upgrades</h2><Upgrade icon="🥛" title={`Besseres Futter ${s.food}`} text="Mehr Wachstum beim Füttern" cost={costs.food} onClick={() => buy("food")}/><Upgrade icon="🧺" title={`Körbchen ${s.bed}`} text="Erzeugt automatisch Münzen" cost={costs.bed} onClick={() => buy("bed")}/><Upgrade icon="🐾" title={`Katzenfreund ${s.friend}`} text="Mehr Münzen pro Aktion" cost={costs.friend} onClick={() => buy("friend")}/></section>
-  </main>;
-}
-function Bar({ label, value, text, cls }) { const v = Math.max(0, Math.min(100, value)); return <div className="barbox"><div><b>{label}</b><span>{text || `${Math.floor(v)}%`}</span></div><div className="bar"><i className={cls} style={{ width: `${v}%` }}/></div></div>; }
-function Upgrade({ icon, title, text, cost, onClick }) { return <div className="upgrade"><span className="icon">{icon}</span><div><b>{title}</b><small>{text}</small></div><button onClick={onClick}>{cost} 🪙</button></div>; }
+const NAMES=["Minka","Luna","Mochi","Nala","Simba","Pixel","Flocke","Keks","Milo","Tapsi","Nova","Chili"];
+const COLORS=["orange","black","white","gray","cream","calico"];
+const RARITIES=["Gewöhnlich","Selten","Episch","Legendär","Mythisch"];
+const empty={coins:120,food:80,toys:10,science:0,hearts:0,lineage:0,selected:1,nextId:2,last:Date.now(),buildings:{kitchen:0,nursery:0,lab:0,playroom:0},research:{growth:0,fertility:0,genes:0,offline:0},cats:[{id:1,name:"Minka",sex:"♀",color:"orange",pattern:"tabby",rarity:0,age:0.2,growth:12,happiness:82,hunger:86,health:100,size:1,genes:{size:2,beauty:2,energy:2,luck:1},parents:[],generation:1}],quests:{feed:0,pet:0,breed:0}};
+const load=()=>{try{return {...empty,...JSON.parse(localStorage.getItem("kitty-breeder-v2")||"{}")}}catch{return empty}};
+const fmt=n=>n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?(n/1e3).toFixed(1)+"K":Math.floor(n);
+const stage=c=>c.age<1?"Kätzchen":c.age<3?"Jungkatze":c.age<8?"Erwachsen":c.age<13?"Senior":"Uralte Katze";
+const stageClass=c=>c.age<1?"baby":c.age<3?"young":c.age<8?"adult":c.age<13?"senior":"ancient";
+const value=c=>Math.floor((c.genes.size+c.genes.beauty+c.genes.energy+c.genes.luck)*35*(1+c.rarity*.8)*c.generation);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function App(){
+ const [s,setS]=useState(load); const [tab,setTab]=useState("cats"); const [note,setNote]=useState("");
+ const cat=s.cats.find(c=>c.id===s.selected)||s.cats[0];
+ const production=useMemo(()=>{const happy=s.cats.reduce((a,c)=>a+c.happiness/100,0);return {coins:(s.buildings.playroom*1.5+s.cats.length*.25)*happy*(1+s.lineage*.1),food:s.buildings.kitchen*.35,science:s.buildings.lab*.08}},[s]);
+ const toast=t=>{setNote(t);clearTimeout(window.tt);window.tt=setTimeout(()=>setNote(""),1800)};
+ const mutate=fn=>setS(p=>{const n=structuredClone(p);fn(n);return n});
+ const act=(type)=>mutate(n=>{const c=n.cats.find(x=>x.id===n.selected);if(!c)return;if(type==="feed"){if(n.food<5)return toast("Nicht genug Futter");n.food-=5;c.hunger=Math.min(100,c.hunger+24);c.growth+=7+n.research.growth*2;n.quests.feed++}if(type==="pet"){c.happiness=Math.min(100,c.happiness+15);c.health=Math.min(100,c.health+2);n.hearts+=1+c.rarity;n.quests.pet++}if(type==="play"){if(n.toys<1)return toast("Keine Spielzeuge");n.toys--;c.happiness=Math.min(100,c.happiness+25);c.hunger=Math.max(0,c.hunger-4);c.growth+=4;c.genes.energy+=Math.random()<.05?1:0}if(c.growth>=100){c.growth-=100;c.size+=.12+c.genes.size*.025;n.coins+=Math.floor(40*c.size);toast(`${c.name} ist gewachsen!`)}});
+ const buy=(kind)=>mutate(n=>{const lv=n.buildings[kind],cost=Math.floor(({kitchen:120,nursery:220,lab:400,playroom:180}[kind])*1.75**lv);if(n.coins<cost)return toast("Nicht genug Münzen");n.coins-=cost;n.buildings[kind]++;toast("Gebäude verbessert")});
+ const research=(kind)=>mutate(n=>{const lv=n.research[kind],cost=Math.floor(25*2.1**lv);if(n.science<cost)return toast("Nicht genug Forschung");n.science-=cost;n.research[kind]++;toast("Forschung abgeschlossen")});
+ const breed=()=>mutate(n=>{if(n.cats.length>=4+n.buildings.nursery*2)return toast("Kinderstube voll");if(n.hearts<20)return toast("Du brauchst 20 Herzen");const adults=n.cats.filter(c=>c.age>=2&&c.health>50);if(adults.length<2)return toast("Du brauchst zwei erwachsene Katzen");const a=adults[0],b=adults[1];n.hearts-=20;const gene=k=>Math.max(1,Math.round((a.genes[k]+b.genes[k])/2)+(Math.random()<(.08+n.research.genes*.03)?1:0));const rarity=Math.min(4,Math.max(a.rarity,b.rarity)+(Math.random()<.08+n.research.fertility*.02?1:0));const baby={id:n.nextId++,name:pick(NAMES),sex:Math.random()<.5?"♀":"♂",color:Math.random()<.55?pick([a.color,b.color]):pick(COLORS),pattern:pick([a.pattern,b.pattern,"solid","tabby","spots","tuxedo"]),rarity,age:0,growth:0,happiness:90,hunger:90,health:100,size:.65,genes:{size:gene("size"),beauty:gene("beauty"),energy:gene("energy"),luck:gene("luck")},parents:[a.name,b.name],generation:Math.max(a.generation,b.generation)+1};n.cats.push(baby);n.selected=baby.id;n.quests.breed++;toast(`${baby.name} wurde geboren!`)});
+ const sell=()=>mutate(n=>{if(n.cats.length<=1)return toast("Eine Katze muss bleiben");const c=n.cats.find(x=>x.id===n.selected);const price=value(c);n.coins+=price;n.cats=n.cats.filter(x=>x.id!==c.id);n.selected=n.cats[0].id;toast(`Adoptiert für ${price} Münzen`)});
+ const prestige=()=>mutate(n=>{if(n.cats.length<8)return toast("Benötigt 8 Katzen");const gain=Math.max(1,Math.floor(n.cats.reduce((a,c)=>a+c.generation+c.rarity,0)/10));Object.assign(n,structuredClone(empty),{lineage:n.lineage+gain,coins:120+gain*100});toast(`Neue Blutlinie: +${gain}`)});
+ useEffect(()=>{const offline=Math.min(43200,(Date.now()-(s.last||Date.now()))/1000)*(1+s.research.offline*.25);if(offline>30)mutate(n=>{n.coins+=production.coins*offline;n.food+=production.food*offline;n.science+=production.science*offline;toast(`Offline-Ertrag: ${fmt(production.coins*offline)} Münzen`)});const t=setInterval(()=>mutate(n=>{n.coins+=production.coins;n.food+=production.food;n.science+=production.science;n.last=Date.now();n.cats.forEach(c=>{c.age+=1/720;c.hunger=Math.max(0,c.hunger-.035);c.happiness=Math.max(0,c.happiness-.02);if(c.hunger<20)c.health=Math.max(0,c.health-.04);else c.health=Math.min(100,c.health+.01)})}),1000);return()=>clearInterval(t)},[]);
+ useEffect(()=>localStorage.setItem("kitty-breeder-v2",JSON.stringify({...s,last:Date.now()})),[s]);
+ return <main className="app"><div className={`toast ${note?"show":""}`}>{note}</div><header><div><small>Münzen</small>🪙 {fmt(s.coins)}</div><div><small>Futter</small>🥣 {fmt(s.food)}</div><div><small>Herzen</small>💗 {fmt(s.hearts)}</div><div><small>Blutlinie</small>🧬 {s.lineage}</div></header>
+ <nav>{[["cats","Katzen"],["breed","Zucht"],["home","Anwesen"],["research","Forschung"]].map(([k,l])=><button className={tab===k?"active":""} onClick={()=>setTab(k)} key={k}>{l}</button>)}</nav>
+ {tab==="cats"&&<><section className="card hero"><div className="title"><div><h1>{cat.name} <span>{cat.sex}</span></h1><p>{RARITIES[cat.rarity]} · Generation {cat.generation} · {stage(cat)}</p></div><b className={`rarity r${cat.rarity}`}>{"★".repeat(cat.rarity+1)}</b></div><div className="scene"><div className="pixel-room"/><div className={`pixel-cat ${stageClass(cat)} ${cat.color} ${cat.pattern}`} title="CC0 Pixel Cat Sprite"/><span className="age">{cat.age.toFixed(1)} Jahre · {cat.size.toFixed(2)}× Größe</span></div><Bars cat={cat}/><div className="actions"><button onClick={()=>act("feed")}>🥣 Füttern</button><button onClick={()=>act("pet")}>💗 Streicheln</button><button onClick={()=>act("play")}>🧶 Spielen</button><button className="danger" onClick={sell}>🏠 Vermitteln</button></div></section><section className="card"><h2>Deine Katzen <small>{s.cats.length}/{4+s.buildings.nursery*2}</small></h2><div className="catgrid">{s.cats.map(c=><button key={c.id} className={`catcard ${c.id===s.selected?"selected":""}`} onClick={()=>setS(p=>({...p,selected:c.id}))}><div className={`mini-cat ${stageClass(c)} ${c.color}`}/><b>{c.name}</b><small>Gen. {c.generation} · {RARITIES[c.rarity]}</small></button>)}</div></section></>}
+ {tab==="breed"&&<section className="card"><h1>Zuchtzentrum</h1><p>Kombiniere erwachsene Katzen. Eigenschaften werden vererbt, Mutationen können stärkere Gene und höhere Seltenheiten erzeugen.</p><div className="gene-panel">{["size","beauty","energy","luck"].map(k=><div key={k}><span>{{size:"Größe",beauty:"Schönheit",energy:"Energie",luck:"Glück"}[k]}</span><b>{cat.genes[k]}</b></div>)}</div><button className="big" onClick={breed}>💞 Nachwuchs züchten · 20 Herzen</button><h2>Stammbaum</h2><p>{cat.parents.length?`${cat.parents[0]} × ${cat.parents[1]}`:"Gründerkatze ohne bekannte Eltern"}</p><button className="prestige" onClick={prestige}>🧬 Neue Blutlinie beginnen</button><small className="hint">Ab 8 Katzen. Setzt den Hof zurück und gibt dauerhafte Produktionsboni.</small></section>}
+ {tab==="home"&&<section className="card"><h1>Katzenanwesen</h1><p>Gebäude automatisieren Ressourcen und erweitern deine Zucht.</p>{[["kitchen","Katzenküche","Produziert Futter","🥣"],["nursery","Kinderstube","Mehr Katzenplätze","🧺"],["playroom","Spielzimmer","Produziert Münzen","🧶"],["lab","Genlabor","Produziert Forschung","🔬"]].map(([k,t,d,i])=><Shop key={k} icon={i} title={t} desc={d} level={s.buildings[k]} cost={Math.floor(({kitchen:120,nursery:220,lab:400,playroom:180}[k])*1.75**s.buildings[k])} buy={()=>buy(k)}/>)}</section>}
+ {tab==="research"&&<section className="card"><h1>Genforschung <small>🔬 {fmt(s.science)}</small></h1>{[["growth","Wachstum","Mehr Wachstum beim Füttern"],["fertility","Fruchtbarkeit","Höhere Chance auf Seltenheit"],["genes","Genmutation","Höhere Chance auf bessere Gene"],["offline","Ruhemodus","Mehr Offline-Ertrag"]].map(([k,t,d])=><Shop key={k} icon="🧬" title={t} desc={d} level={s.research[k]} cost={Math.floor(25*2.1**s.research[k])} buy={()=>research(k)}/>)}</section>}
+ <footer>Produktion: {production.coins.toFixed(1)} 🪙/s · {production.food.toFixed(1)} 🥣/s · {production.science.toFixed(2)} 🔬/s</footer></main>}
+function Bars({cat}){return <div className="bars"><Bar label="Hunger" value={cat.hunger}/><Bar label="Glück" value={cat.happiness}/><Bar label="Gesundheit" value={cat.health}/><Bar label="Wachstum" value={cat.growth}/></div>}
+function Bar({label,value}){return <div className="barrow"><span>{label}</span><div><i style={{width:`${Math.max(0,Math.min(100,value))}%`}}/></div><b>{Math.floor(value)}%</b></div>}
+function Shop({icon,title,desc,level,cost,buy}){return <div className="shop"><span>{icon}</span><div><b>{title} · Stufe {level}</b><small>{desc}</small></div><button onClick={buy}>{fmt(cost)} 🪙</button></div>}
 createRoot(document.getElementById("root")).render(<App/>);
