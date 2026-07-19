@@ -1,20 +1,22 @@
 # Kitty Idle
 
-Ein mobiles Katzen-Idle-Game mit React und Vite.
+Ein komplexes mobiles Pixel-Art-Idle-Game rund um Katzenzucht, Gene, Wachstum, Alter und Generationen.
 
 ## Spielen
 
-Nach Aktivierung von GitHub Pages ist das Spiel hier erreichbar:
-
 https://tammapac.github.io/Kitty_Idle/
 
-## Funktionen
+## Aktuelle Systeme
 
-- Katze füttern, streicheln und mit ihr spielen
-- Hunger, Glück, Wachstum und Level
-- Idle- und Offline-Münzen
-- Futter-, Körbchen- und Katzenfreund-Upgrades
-- Automatisches Speichern im Browser
+- Mehrere Katzen mit Namen, Geschlecht, Fellfarbe und Seltenheit
+- Lebensphasen vom Kätzchen bis zur uralten Katze
+- Gene für Größe, Schönheit, Energie und Glück
+- Zucht, Vererbung, Mutationen und Generationen
+- Hunger, Glück, Gesundheit und Wachstum
+- Automatische Münz-, Futter- und Forschungsproduktion
+- Gebäude, Genforschung und neue Blutlinien
+- Offline-Fortschritt und lokales Speichern
+- Mobile Pixel-Art-Oberfläche
 
 ## Lokal starten
 
