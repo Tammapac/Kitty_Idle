@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#2a1b32" />
-    <link rel="stylesheet" href="/Kitty_Idle/sprite-fix.css" />
-    <link rel="stylesheet" href="/Kitty_Idle/mobile-ui.css" />
-    <link rel="stylesheet" href="/Kitty_Idle/start-screen.css" />
+    <link rel="stylesheet" href="/Kitty_Idle/sprite-fix.css?v=5" />
+    <link rel="stylesheet" href="/Kitty_Idle/mobile-ui.css?v=5" />
+    <link rel="stylesheet" href="/Kitty_Idle/start-screen.css?v=5" />
     <title>Kitty Idle</title>
-    <script src="/Kitty_Idle/startup.js"></script>
+    <script src="/Kitty_Idle/startup.js?v=5"></script>
   </head>
   <body>
     <div id="start-screen">
@@ -20,14 +20,26 @@
           <div class="start-kitten two"></div>
         </div>
         <div class="start-buttons">
-          <button id="continue-game" type="button">🐾 Weiterspielen</button>
+          <button id="continue-game" type="button" onclick="window.closeKittyStart && window.closeKittyStart()">🐾 Weiterspielen</button>
           <button id="new-game" class="new-game" type="button">🧺 Neues Spiel</button>
         </div>
         <small class="start-note">Babykatzen wachsen mit der Zeit zu erwachsenen Zuchtkatzen heran.</small>
       </section>
     </div>
     <div id="root"></div>
+    <script>
+      window.closeKittyStart = function () {
+        try { sessionStorage.setItem('kitty-start-seen', '1'); } catch (_) {}
+        var screen = document.getElementById('start-screen');
+        if (screen) {
+          screen.style.display = 'none';
+          screen.remove();
+        }
+        document.body.classList.add('game-started');
+        window.scrollTo(0, 0);
+      };
+    </script>
     <script type="module" src="/src/main.jsx"></script>
-    <script src="/Kitty_Idle/start-screen.js"></script>
+    <script src="/Kitty_Idle/start-screen.js?v=5" defer></script>
   </body>
 </html>
